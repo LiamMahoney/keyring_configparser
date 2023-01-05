@@ -1,0 +1,22 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "keyring_configparser"
+version = "0.1.0"
+authors = [
+  { name="liammahoney", email="liammahoney96@gmail.com" },
+]
+description = "A ConfigParser wrapper that reads values stored in a system keyring service."
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/LiamMahoney/keyring_configparser"
+"Bug Tracker" = "https://github.com/LiamMahoney/keyring_configparser/issues"

@@ -1,9 +1,9 @@
 import configparser
-import keyring
+import keyring as default_keyring
 
 class KeyringInterpolation(configparser.Interpolation):
-    """Interpolation that uses keyring to retrieve values stored in a system's
-    keyring.
+    """Interpolation subclass that uses keyring to retrieve values stored in a
+    system's keyring.
 
     When the token specified is encountered, the interpolation looks up the
     value in the keyring. It uses the config file section as the keyring 
@@ -20,12 +20,16 @@ class KeyringInterpolation(configparser.Interpolation):
     `keyring.get_password('EXAMPLE_SERVICE', 'username')`
     """
 
-    def __init__(self, token="$."):
+    def __init__(self, token="$.", keyring=None):
         """
         Args:
-            token (str, optional): Token to signal the value is stored in keyring. Defaults to "$.".
+            token (str, optional): Token to signal the value is stored in 
+            keyring. Defaults to "$.".
+            keyring (keyring, optional): a pre-configured instance of keyring.
+            If not supplied, a new empty instance of keyring is created
         """
         self.token = token
+        self.keyring = keyring if keyring else default_keyring
 
     def before_get(self, parser, section, option, value, defaults):
         """If the value matches the token specified when creating an instance
@@ -38,12 +42,14 @@ class KeyringInterpolation(configparser.Interpolation):
             str: value stored in the configuration file or keyring
         """
         if (value == self.token):
-            # TODO: figure out how to make it work with different keyring backends - need to research keyring more and different backends. **USE DOCKER** to learn more about keyring
-            parsed_value = keyring.get_password(section, option)
+            # parse value stored in keyring
+            parsed_value = self.keyring.get_password(section, option)
 
             if (parsed_value == None):
+                # thought this aligned with configparser's not found behavior
                 raise KeyError(f"entry in keyring with service '{section}' and username '{option}' not found")
             
             return parsed_value
         
+        # token not specified, return value stored in config file
         return value

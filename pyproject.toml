@@ -3,12 +3,12 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "keyring_interpolation"
+name = "keyring_configparser"
 version = "0.1.0"
 authors = [
   { name="liammahoney", email="liammahoney96@gmail.com" },
 ]
-description = "A configparser.Interpolation subclass that configures a ConfigParser instance to read values from a system's keyring via the keyring pypi library."
+description = "A ConfigParser subclass that can read configuration values stored with the keyring pypi package."
 readme = "README.md"
 requires-python = ">=3.7"
 classifiers = [
@@ -18,5 +18,5 @@ classifiers = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/LiamMahoney/keyring_interpolation/"
-"Bug Tracker" = "https://github.com/LiamMahoney/keyring_interpolation/issues/"
+"Homepage" = "https://github.com/LiamMahoney/keyring_configparser/"
+"Bug Tracker" = "https://github.com/LiamMahoney/keyring_configparser/issues/"

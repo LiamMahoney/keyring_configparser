@@ -18,15 +18,21 @@ class KeyringInterpolation(configparser.Interpolation):
 
     would equate to the keyring call 
     `keyring.get_password('EXAMPLE_SERVICE', 'username')`
+    
+    Attributes:
+        token (str, optional): Token to signal the value is stored in 
+        keyring. Defaults to "$.".
+        keyring (keyring, optional): a pre-configured instance of keyring.
+        If not supplied, a new empty instance of keyring is created
     """
-
     def __init__(self, token="$.", keyring=None):
         """
         Args:
             token (str, optional): Token to signal the value is stored in 
             keyring. Defaults to "$.".
             keyring (keyring, optional): a pre-configured instance of keyring.
-            If not supplied, a new empty instance of keyring is created
+            If not supplied, a new empty instance of keyring is created.  
+            Defaults to None.
         """
         self.token = token
         self.keyring = keyring if keyring else default_keyring

@@ -1,32 +1,33 @@
-# keyring_interpolation
+# keyring_configparser
 
-A [configparser.Interpolation][https://docs.python.org/3/library/configparser.html#interpolation-of-values] subclass that configures ConfigParser instances to read values from a system's keyring via the [keyring pypi package](https://pypi.org/project/keyring/).
+A ConfigParser subclass that can read configuration values stored with the [keyring pypi package](https://pypi.org/project/keyring/).
 
 ## Installation
 
-`pip install keyring_interpolation`
+`pip install keyring_configparser`
 
 ## Usage
 
-```python
-from keyring_interpolation import KeyringInterpolation
+### Default Keyring Backend
 
-config = configparser.ConfigParser(interpolation=KeyringInterpolation())
+```python
+from keyring_configparser import KeyringConfigParser
+
+config = KeyringConfigParser()
 config.read("/tmp/app.config")
-non_sec = config.get('SECTION_1', 'value1')
-sec = config.get('SECRET_SECTION', 'some_secret')
+config.get('EXAMPLE_SECTION', 'non_secret')
+> hello world
+sec = config.get('EXAMPLE_SECTION', 'some_secret')
+> very_secret_value
 ```
 
 where `/tmp/app.config` is
 
 ```
 #/tmp/app.config
-[SECTION_1]
-value1 = hello world
-
-[SECRET_SECTION]
+[EXAMPLE_SECTION]
+non_secret = hello world
 some_secret = $.
-not_set_secret = $.
 ```
 
 and the following has been ran in python
@@ -34,5 +35,22 @@ and the following has been ran in python
 ```python
 import keyring
 
-keyring.set_password("SECRET_SECTION", "some_secret", "very_secret_value")
+keyring.set_password("EXAMPLE_SECTION", "some_secret", "very_secret_value")
+```
+
+### Non-Default Keyring Backend
+
+You can pass a configured keyring instance to the KeyringConfigParser constructor.
+
+For example, to use the [`keyrings.cryptfile`](https://pypi.org/project/keyrings.cryptfile/) backend:
+
+```python
+from keyring_configparser import KeyringConfigParser
+from keyrings.cryptfile.cryptfile import CryptFileKeyring
+
+kr = CryptFileKeyring()
+kr.keyring_key = "CRYPTFILE_PASSWORD"
+
+config = KeyringConfigParser(keyring=kr)
+config.get('section', 'username')
 ```

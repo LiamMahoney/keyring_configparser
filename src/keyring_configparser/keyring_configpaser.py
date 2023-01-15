@@ -1,5 +1,5 @@
 import configparser
-from keyring_interpolation import KeyringInterpolation
+from .keyring_interpolation import KeyringInterpolation
 
 class KeyringConfigParser(configparser.ConfigParser):
     """ConfigParser that can read values with the keyring pypi library.

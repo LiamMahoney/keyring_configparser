@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "keyring_configparser"
 version = "0.1.0"
 authors = [
-  { name="liammahoney", email="liammahoney96@gmail.com" },
+  { name="Liam Mahoney", email="liammahoney96@gmail.com" },
 ]
 description = "A ConfigParser subclass that can read configuration values stored with the keyring pypi package."
 readme = "README.md"
@@ -15,6 +15,9 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
+]
+dependencies = [
+    "keyring>=23.13.1"
 ]
 
 [project.urls]

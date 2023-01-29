@@ -1,1 +1,2 @@
 from .keyring_interpolation import KeyringInterpolation
+from .keyring_configpaser import KeyringConfigParser

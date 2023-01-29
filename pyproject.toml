@@ -8,7 +8,7 @@ version = "0.1.0"
 authors = [
   { name="Liam Mahoney", email="liammahoney96@gmail.com" },
 ]
-description = "A ConfigParser subclass that can read configuration values stored with the keyring pypi package."
+description = "A ConfigParser subclass that can read values stored with the keyring pypi package."
 readme = "README.md"
 requires-python = ">=3.7"
 classifiers = [

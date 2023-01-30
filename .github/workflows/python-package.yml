@@ -30,6 +30,9 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install flake8 pytest keyrings.cryptfile keyrings.alt
         python -m pip install .
+    - name: See available backends
+      run: |
+        keyring --list-backends
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names

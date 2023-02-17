@@ -1,5 +1,7 @@
 # keyring_configparser
 
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/LiamMahoney/keyring_configparser/python-package.yml) ![PyPI](https://img.shields.io/pypi/v/keyring-configparser) ![PyPI - Downloads](https://img.shields.io/pypi/dm/keyring-configparser) ![PyPI - License](https://img.shields.io/pypi/l/keyring-configparser)
+
 A ConfigParser subclass that can read values stored with the [keyring pypi package](https://pypi.org/project/keyring/).
 
 ## Installation

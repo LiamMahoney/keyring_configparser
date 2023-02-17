@@ -7,6 +7,7 @@ import tempfile
 from keyring_configparser import KeyringConfigParser
 from configparser import NoOptionError, NoSectionError
 from keyrings.cryptfile.cryptfile import CryptFileKeyring
+from keyrings.alt.file import PlaintextKeyring
 
 section_name = "keyring_configparser_testing"
 secret_key = "secret_key"
@@ -27,6 +28,7 @@ class TestDefaultKeyring:
 
     @pytest.fixture
     def default_keyring(self):
+        keyring.set_keyring(PlaintextKeyring())
         keyring.set_password(section_name, secret_key, secret_value)
         yield
         keyring.delete_password(section_name, secret_key)

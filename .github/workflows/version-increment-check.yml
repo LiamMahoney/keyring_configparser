@@ -46,4 +46,11 @@ jobs:
     needs: [curr-branch-version, main-version]
     #TODO: validate that version of curr-branch is > main-version - fail otherwise - probably need to create a javascript action? shell seems like it'd be a bigger challenge than I'd hope
     steps:
-      - run: ${{needs.curr-branch-version.outputs.updated_version}} ${{needs.main-version.outputs.main_version}}
+      - run: |
+          printf -v versions '%s\n%s' "${{ needs.curr-branch-version.outputs.updated_version }}" "${{ needs.main-version.outputs.main_version }}"
+          if [[ $versions = "$(sort -V <<< "$versions")" ]]; then
+            echo "branch version ${{ needs.curr-branch-version.outputs.updated_version }} <= default version ${{ needs.main-version.outputs.main_version }}. Must be incremented."
+            exit 1;
+          else
+            exit 0;
+          fi

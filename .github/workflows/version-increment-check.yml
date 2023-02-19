@@ -1,0 +1,48 @@
+# This workflow checks that the version number of the project has been incremented compared to the version number in main.
+# **Only runs if a python file has been updated**
+
+name: python-version-increment-check
+
+#TODO: setup default branch variable that can be overwritten?
+#TODO: see if there's a way to create a re-usable step / job? (parsing python version number) - probbalyu amkes sense to make it a shell script and call it?
+
+
+on:
+  
+  pull_request:
+    branches: [ "main" ]
+    paths: [ "**.py" ]
+
+jobs:
+  
+  curr-branch-version:
+    runs-on: ubuntu-latest
+    outputs:
+      updated_version: ${{ steps.curr-branch-version.outputs.value }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: SebRollen/toml-action@v1.0.1
+        id: curr-branch-version
+        with:
+          file: 'pyproject.toml'
+          field: 'project.version'
+
+  main-version:
+    runs-on: ubuntu-latest
+    outputs:
+      main_version: ${{ steps.main-version.outputs.value }}
+    steps: 
+      - uses: actions/checkout@v3
+        with:
+          ref: main
+      - uses: SebRollen/toml-action@v1.0.1
+        id: main-version
+        with:
+          file: 'pyproject.toml'
+          field: 'project.version'
+
+  compare-versions:
+    needs: [curr-branch-version, main-version]
+    #TODO: validate that version of curr-branch is > main-version - fail otherwise - probably need to create a javascript action? shell seems like it'd be a bigger challenge than I'd hope
+    steps:
+      - run: ${{needs.curr-branch-version.outputs.updated_version}} ${{needs.main-version.outputs.main_version}}

@@ -1,11 +1,10 @@
 # This workflow checks that the version number of the project has been incremented compared to the version number in main.
 # **Only runs if a python file has been updated**
 
-name: python-version-increment-check
+name: python-version-increment
 
 #TODO: setup default branch variable that can be overwritten?
 #TODO: see if there's a way to create a re-usable step / job? (parsing python version number) - probbalyu amkes sense to make it a shell script and call it?
-
 
 on:
   
@@ -15,41 +14,44 @@ on:
 
 jobs:
   
-  curr-branch-version:
+  updated-version:
+    # get PR branch version
     runs-on: ubuntu-latest
     outputs:
-      updated_version: ${{ steps.curr-branch-version.outputs.value }}
+      version: ${{ steps.get-version.outputs.value }}
     steps:
       - uses: actions/checkout@v3
       - uses: SebRollen/toml-action@v1.0.1
-        id: curr-branch-version
+        id: get-version
         with:
           file: 'pyproject.toml'
           field: 'project.version'
 
-  main-version:
+  default-version:
+    # get default branch version
     runs-on: ubuntu-latest
     outputs:
-      main_version: ${{ steps.main-version.outputs.value }}
+      version: ${{ steps.get-version.outputs.value }}
     steps: 
       - uses: actions/checkout@v3
         with:
           ref: main
       - uses: SebRollen/toml-action@v1.0.1
-        id: main-version
+        id: get-version
         with:
           file: 'pyproject.toml'
           field: 'project.version'
 
   compare-versions:
+    # validate PR (updated) branch version > default branch version
     runs-on: ubuntu-latest
-    needs: [curr-branch-version, main-version]
-    #TODO: validate that version of curr-branch is > main-version - fail otherwise - probably need to create a javascript action? shell seems like it'd be a bigger challenge than I'd hope
+    needs: [branch-version, default-version]
+    # https://stackoverflow.com/questions/48491662/comparing-two-version-numbers-in-a-shell-script
     steps:
       - run: |
-          printf -v versions '%s\n%s' "${{ needs.curr-branch-version.outputs.updated_version }}" "${{ needs.main-version.outputs.main_version }}"
+          printf -v versions '%s\n%s' "${{ needs.updated-version.outputs.version }}" "${{ needs.default-version.outputs.version }}"
           if [[ $versions = "$(sort -V <<< "$versions")" ]]; then
-            echo "branch version ${{ needs.curr-branch-version.outputs.updated_version }} <= default version ${{ needs.main-version.outputs.main_version }}. Must be incremented."
+            echo "branch version ${{ needs.updated-version.outputs.version }} <= default version ${{ needs.default-version.outputs.version }}. Must be incremented."
             exit 1;
           else
             exit 0;

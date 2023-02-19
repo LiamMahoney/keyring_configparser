@@ -26,6 +26,4 @@ class KeyringConfigParser(configparser.ConfigParser):
             If not supplied, a new empty instance of keyring is created.  
             Defaults to None.
         """
-        super().__init__(interpolation=KeyringInterpolation(token=token, keyring=keyring))
-
-        
+        super().__init__(interpolation=KeyringInterpolation(token=token, keyring=keyring))    

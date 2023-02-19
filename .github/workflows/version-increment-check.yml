@@ -51,8 +51,9 @@ jobs:
       - run: |
           printf -v versions '%s\n%s' "${{ needs.updated-version.outputs.version }}" "${{ needs.default-version.outputs.version }}"
           if [[ $versions = "$(sort -V <<< "$versions")" ]]; then
-            echo "branch version ${{ needs.updated-version.outputs.version }} <= default version ${{ needs.default-version.outputs.version }}. Must be incremented."
+            echo "branch version ${{ needs.updated-version.outputs.version }} <= default version ${{ needs.default-version.outputs.version }}. Must be larger than default branch."
             exit 1;
           else
+            echo "branch version ${{ needs.updated-version.outputs.version }} > default version ${{ needs.default-version.outputs.version }}."
             exit 0;
           fi

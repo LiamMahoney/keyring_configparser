@@ -1,0 +1,56 @@
+# This workflow checks that the version number of the project has been incremented compared to the version number in main.
+# **Only runs if a python file has been updated**
+
+name: python-version-increment-check
+
+on:
+  
+  pull_request:
+    branches: [ "main" ]
+    paths: [ "**.py" ]
+
+jobs:
+  
+  updated-version:
+    # get PR branch version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-version.outputs.value }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: SebRollen/toml-action@v1.0.1
+        id: get-version
+        with:
+          file: 'pyproject.toml'
+          field: 'project.version'
+
+  default-version:
+    # get default branch version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-version.outputs.value }}
+    steps: 
+      - uses: actions/checkout@v3
+        with:
+          ref: main
+      - uses: SebRollen/toml-action@v1.0.1
+        id: get-version
+        with:
+          file: 'pyproject.toml'
+          field: 'project.version'
+
+  compare-versions:
+    # validate PR (updated) branch version > default branch version
+    runs-on: ubuntu-latest
+    needs: [updated-version, default-version]
+    # https://stackoverflow.com/questions/48491662/comparing-two-version-numbers-in-a-shell-script
+    steps:
+      - run: |
+          printf -v versions '%s\n%s' "${{ needs.updated-version.outputs.version }}" "${{ needs.default-version.outputs.version }}"
+          if [[ $versions = "$(sort -V <<< "$versions")" ]]; then
+            echo "branch version ${{ needs.updated-version.outputs.version }} <= default version ${{ needs.default-version.outputs.version }}. Must be larger than default branch."
+            exit 1;
+          else
+            echo "branch version ${{ needs.updated-version.outputs.version }} > default version ${{ needs.default-version.outputs.version }}."
+            exit 0;
+          fi

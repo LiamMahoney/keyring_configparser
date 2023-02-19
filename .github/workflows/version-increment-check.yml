@@ -42,6 +42,7 @@ jobs:
           field: 'project.version'
 
   compare-versions:
+    runs-on: ubuntu-latest
     needs: [curr-branch-version, main-version]
     #TODO: validate that version of curr-branch is > main-version - fail otherwise - probably need to create a javascript action? shell seems like it'd be a bigger challenge than I'd hope
     steps:

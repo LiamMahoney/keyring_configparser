@@ -1,9 +1,12 @@
+# Deploys a new version of the package to PyPI. Only runs when a python file is updated in a push to main.
+# TODO: automatically create a release containing the body of the PR, and the tag as the version number. Bigger challenge than I thought it would be.
 
 name: deploy
 
 on:
   push:
     branches: [ "main" ]
+    paths: [ "**.py" ]
 
 jobs:
   

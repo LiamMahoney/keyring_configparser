@@ -44,5 +44,9 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: build_archives-${{needs.build.outputs.version}}
-      - name: Display downloaded artifact
+          path: dist
+      - name: Display dir
         run: ls -R
+      - name: Display downloaded artifact files
+        run: ls -R
+        working-directory: dir

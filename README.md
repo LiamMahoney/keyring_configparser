@@ -10,7 +10,7 @@ A ConfigParser subclass that can read values stored with the [keyring pypi packa
 
 ## Usage
 
-It is recommended to be familiar with the [ConfigParser](https://docs.python.org/3/library/configparser.html) module and the [keyring](https://pypi.org/project/keyring/) pypi package.
+It is recommended to be familiar with the [ConfigParser](https://docs.python.org/3/library/configparser.html) module and the [keyring](https://pypi.org/project/keyring/) pypi package before use.
 
 `KeryingConfigParser` is identical to `ConfigParser` except when it reads a specific token as a configuration value (`"$."` by default) it uses the keyring package to resolve the value. This enables using secret values in configuration files without storing the value as plain-text within the file.
 
@@ -18,15 +18,15 @@ It is recommended to be familiar with the [ConfigParser](https://docs.python.org
 
 ```
 #/tmp/app.config
-[EXAMPLE_SECTION]
+[section_name]
 non_secret = hello world
-some_secret = $.
+secret_name = $.
 ```
 
 ```python
 import keyring
 
-keyring.set_password("EXAMPLE_SECTION", "some_secret", "very_secret_value")
+keyring.set_password("section_name", "secret_name", "secret_value")
 ```
 
 ```python
@@ -34,10 +34,10 @@ from keyring_configparser import KeyringConfigParser
 
 config = KeyringConfigParser()
 config.read("/tmp/app.config")
-config.get('EXAMPLE_SECTION', 'non_secret')
+config.get('section_name', 'non_secret')
 > "hello world"
-sec = config.get('EXAMPLE_SECTION', 'some_secret')
-> "very_secret_value"
+sec = config.get('section_name', 'secret_name')
+> "secret_value"
 ```
 
 ### Additional Examples
@@ -48,12 +48,19 @@ A configured keyring instance can be supplied to the `KeyringConfigParser` const
 
 For example, to use the [`keyrings.cryptfile`](https://pypi.org/project/keyrings.cryptfile/) backend:
 
+```
+#/tmp/app.config
+[section_name]
+non_secret = hello world
+secret_name = $.
+```
+
 ```python
 from keyrings.cryptfile.cryptfile import CryptFileKeyring
 
 kr = CryptFileKeyring()
 kr.keyring_key = "CRYPTFILE_PASSWORD"
-kr.set_password("EXAMPLE_SECTION", "some_secret", "very_secret_value")
+kr.set_password("section_name", "secret_name", "secret_value")
 ```
 
 ```python
@@ -65,22 +72,26 @@ kr.keyring_key = "CRYPTFILE_PASSWORD"
 
 config = KeyringConfigParser(keyring=kr)
 config.read("/tmp/app.config")
-config.get('EXAMPLE_SECTION', 'some_secret')
-> "very_secret_value"
+config.get('section_name', 'secret_name')
+> "secret_value"
 ```
 
 #### Custom Config Token
 
 A token can be supplied to the `KeyringConfigParser` constructor to override the default token `"$."`. When the custom token is encountered in the configuration file the value will be resolved with keyring.
 
-Given the following configuration file:
-
 ```
 #/tmp/app.config
-[EXAMPLE_SECTION]
+[section_name]
 non_secret = hello world
-some_secret = !~!
+secret_name = !~!
 default_token = $.
+```
+
+```python
+import keyring
+
+keyring.set_password("section_name", "secret_name", "secret_value")
 ```
 
 ```python
@@ -88,9 +99,9 @@ from keyring_configparser import KeyringConfigParser
 
 config = KeyringConfigParser(token="!~!")
 config.read("/tmp/app.config")
-config.get('EXAMPLE_SECTION', 'some_secret')
-> "very_secret_value"
-config.get('EXAMPLE_SECTION', 'default_token')
+config.get('section_name', 'secret_name')
+> "secret_value"
+config.get('section_name', 'default_token')
 > "$."
 ```
 

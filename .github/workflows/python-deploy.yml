@@ -37,8 +37,12 @@ jobs:
         name: build_archives-${{steps.version.outputs.value}}
         path: dist/
   
-  # deploy:
-  #   runs-on: ubuntu_latest
-  #   needs: [build]
-  #   steps:
-  #     - uses: 
+  deploy:
+    runs-on: ubuntu_latest
+    needs: [build]
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: build_archives-${{needs.build.outputs.version}}
+      - name: Display downloaded artifact
+        run: ls -R

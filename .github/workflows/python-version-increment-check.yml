@@ -1,5 +1,4 @@
 # This workflow checks that the version number of the project has been incremented compared to the version number in main.
-# **Only runs if a python file has been updated**
 
 name: python-version-increment-check
 
@@ -7,7 +6,6 @@ on:
   
   pull_request:
     branches: [ "main" ]
-    paths: [ "**.py" ]
 
 jobs:
   

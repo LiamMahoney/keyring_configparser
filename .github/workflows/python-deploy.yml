@@ -37,7 +37,7 @@ jobs:
         name: build_archives-${{steps.version.outputs.value}}
         path: dist/
   
-  deploy:
+  deploy-pypi:
     runs-on: ubuntu-latest
     needs: [build]
     steps:
@@ -45,8 +45,7 @@ jobs:
         with:
           name: build_archives-${{needs.build.outputs.version}}
           path: dist
-      - name: Display dir
-        run: ls -R
-      - name: Display downloaded artifact files
-        run: ls -R
-        working-directory: dir
+      - name: Publish Python Distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
